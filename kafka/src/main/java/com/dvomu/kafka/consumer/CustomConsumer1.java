@@ -1,9 +1,6 @@
 package com.dvomu.kafka.consumer;
 
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
 import java.time.Duration;
@@ -15,7 +12,7 @@ import java.util.Properties;
  * @author: dvomu
  * @create: 2022-05-14
  */
-public class CustomConsumer {
+public class CustomConsumer1 {
     public static void main(String[] args) {
         // 0 配置
         Properties properties = new Properties();
@@ -26,20 +23,24 @@ public class CustomConsumer {
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
                 StringDeserializer.class.getName());
 
-        // offset自动提交-默认true
-        properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG,true);
-        // offset自动提交时间间隔-默认5000ms
-        properties.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG,5000);
-
         // 配置消费者组ID
         properties.put(ConsumerConfig.GROUP_ID_CONFIG,"test_consumer");
+
+        //配置分区策略-RoundRobin
+        properties.put(ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG,
+                "org.apache.kafka.clients.consumer.RoundRobinAssignor");
+
+        //配置分区策略-StickyAssignor
+//        properties.put(ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG,
+//                "org.apache.kafka.clients.consumer.StickyAssignor");
+
 
         // 1 创建消费者
         KafkaConsumer<String, String> consumer = new KafkaConsumer<>(properties);
 
-        // 2 定义主题 "test_consumer_01"
+        // 2 定义主题 "topic-test-03"
         Collection<String> topics = new ArrayList<>();
-        topics.add("test_consumer_01");
+        topics.add("topic-test-03");
         consumer.subscribe(topics);
 
         // 3 消费数据
